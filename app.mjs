@@ -18,6 +18,9 @@ import {
 import { router as indexRouter } from "./routes/index.mjs";
 // import { router as notesRouter } from './routes/notes.mjs';
 
+import { InMemoryNotesStore } from "./models/notes-memory.mjs";
+export const NotesStore = new InMemoryNotesStore();
+
 export const app = express();
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
