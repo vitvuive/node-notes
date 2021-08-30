@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "cross-env DEBUG=notes:* node ./app.mjs"
+    "start": "cross-env DEBUG=notes:* node ./app.mjs",
+    "server1": "cross-env DEBUG=notes:* PORT=3001 node ./app.mjs",
+    "server2": "cross-env DEBUG=notes:* PORT=3002 node ./app.mjs"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
