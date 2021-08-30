@@ -33,6 +33,24 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
+app.use(
+  "/assets/vendor/bootstrap",
+  express.static(path.join(__dirname, "node_modules", "bootstrap", "dist"))
+);
+app.use(
+  "/assets/vendor/jquery",
+  express.static(path.join(__dirname, "node_modules", "jquery", "dist"))
+);
+app.use(
+  "/assets/vendor/popper.js",
+  express.static(
+    path.join(__dirname, "node_modules", "popper.js", "dist", "umd")
+  )
+);
+app.use(
+  "/assets/vendor/feather-icons",
+  express.static(path.join(__dirname, "node_modules", "feather-icons", "dist"))
+);
 // Router function lists
 app.use("/", indexRouter);
 app.use("/notes", notesRouter);

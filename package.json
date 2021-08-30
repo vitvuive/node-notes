@@ -5,15 +5,24 @@
   "scripts": {
     "start": "cross-env DEBUG=notes:* node ./app.mjs",
     "server1": "cross-env DEBUG=notes:* PORT=3001 node ./app.mjs",
-    "server2": "cross-env DEBUG=notes:* PORT=3002 node ./app.mjs"
+    "server2": "cross-env DEBUG=notes:* PORT=3002 node ./app.mjs",
+    "download": "wget -O -https://github.com/twbs/bootstrap/archive/v4.5.0.tar.gz | tar xvfz -",
+    "postdownload": "cd bootstrap-4.5.0 && npm install",
+    "clean": "rm -rf bootstrap-4.5.0",
+    "build": "cd bootstrap-4.5.0 && npm run dist",
+    "watch": "cd bootstrap-4.5.0 && npm run watch"
   },
   "dependencies": {
+    "bootstrap": "4.5.x",
     "cookie-parser": "~1.4.4",
     "cross-env": "^7.0.3",
     "debug": "~2.6.9",
     "express": "~4.16.1",
+    "feather-icons": "4.25.x",
     "hbs": "~4.0.4",
     "http-errors": "~1.6.3",
-    "morgan": "~1.9.1"
+    "jquery": "3.5.x",
+    "morgan": "~1.9.1",
+    "popper.js": "1.16.x"
   }
 }
