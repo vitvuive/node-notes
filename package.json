@@ -23,6 +23,7 @@
     "http-errors": "~1.6.3",
     "jquery": "3.5.x",
     "morgan": "~1.9.1",
-    "popper.js": "1.16.x"
+    "popper.js": "1.16.x",
+    "rotating-file-stream": "^2.1.5"
   }
 }

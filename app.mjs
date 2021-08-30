@@ -6,7 +6,11 @@ import { default as logger } from "morgan";
 import { default as cookieParser } from "cookie-parser";
 import { default as bodyParser } from "body-parser";
 import * as http from "http";
+import { default as rfs } from "rotating-file-stream";
 import { approotdir } from "./approotdir.mjs";
+import { default as DBG } from "debug";
+const debug = DBG("notes:debug");
+const dbgerror = DBG("notes:error");
 const __dirname = approotdir;
 import {
   normalizePort,
@@ -19,6 +23,7 @@ import { router as indexRouter } from "./routes/index.mjs";
 import { router as notesRouter } from "./routes/notes.mjs";
 
 import { InMemoryNotesStore } from "./models/notes-memory.mjs";
+
 export const NotesStore = new InMemoryNotesStore();
 
 export const app = express();
@@ -54,6 +59,19 @@ app.use(
 // Router function lists
 app.use("/", indexRouter);
 app.use("/notes", notesRouter);
+
+app.use(
+  logger(process.env.REQUEST_LOG_FORMAT || "dev", {
+    stream: process.env.REQUEST_LOG_FILE
+      ? rfs.createStream(process.env.REQUEST_LOG_FILE, {
+          size: "10M", // rotate every 10 MegaBytes written
+          interval: "1d", // rotate daily
+          compress: "gzip", // compress rotated files
+        })
+      : process.stdout,
+  })
+);
+
 // error handlers
 // catch 404 and forward to error handler
 app.use(handle404);
@@ -64,3 +82,8 @@ export const server = http.createServer(app);
 server.listen(port);
 server.on("error", onError);
 server.on("listening", onListening);
+
+server.on("request", (req, res) => {
+  debug(`${new Date().toISOString()} request ${req.method}
+${req.url}`);
+});
