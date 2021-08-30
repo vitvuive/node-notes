@@ -12,9 +12,13 @@
     "build": "cd bootstrap-4.5.0 && npm run dist",
     "watch": "cd bootstrap-4.5.0 && npm run watch",
     "sqlite3-setup": "sqlite3 chap07.sqlite3 --init models/schema-sqlite3.sql",
-   "sqlite3-start": "cross-env SQLITE_FILE=chap07.sqlite3 DEBUG=notes:* NOTES_MODEL=sqlite3 node ./app.mjs",
-   "sqlite3-server1": "cross-env SQLITE_FILE=chap07.sqlite3 NOTES_MODEL=sqlite3 PORT=3001 node ./app.mjs",
-   "sqlite3-server2": "cross-env SQLITE_FILE=chap07.sqlite3 NOTES_MODEL=sqlite3 PORT=3002 node ./app.mjs"
+    "sqlite3-start": "cross-env SQLITE_FILE=chap07.sqlite3 DEBUG=notes:* NOTES_MODEL=sqlite3 node ./app.mjs",
+    "sqlite3-server1": "cross-env SQLITE_FILE=chap07.sqlite3 NOTES_MODEL=sqlite3 PORT=3001 node ./app.mjs",
+    "sqlite3-server2": "cross-env SQLITE_FILE=chap07.sqlite3 NOTES_MODEL=sqlite3 PORT=3002 node ./app.mjs",
+    "sequelize-start": "cross-env DEBUG=notes:* SEQUELIZE_CONNECT=models/sequelize-sqlite.yaml NOTES_MODEL=sequelize node ./app.mjs",
+   "sequelize-server1": "cross-env SEQUELIZE_CONNECT=models/sequelize- sqlite.yaml NOTES_MODEL=sequelize PORT=3001 node ./app.mjs",
+   "sequelize-server2": "cross-env SEQUELIZE_CONNECT=models/sequelize- sqlite.yaml NOTES_MODEL=sequelize PORT=3002 node ./app.mjs"
+
   },
   "dependencies": {
     "bootstrap": "4.5.x",
@@ -26,9 +30,12 @@
     "hbs": "~4.0.4",
     "http-errors": "~1.6.3",
     "jquery": "3.5.x",
+    "js-yaml": "3.13.x",
     "morgan": "~1.9.1",
+    "mysql": "^2.18.1",
     "popper.js": "1.16.x",
     "rotating-file-stream": "^2.1.5",
+    "sequelize": "^6.6.5",
     "sqlite3": "^5.0.2"
   }
 }
