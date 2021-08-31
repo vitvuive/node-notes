@@ -1,6 +1,7 @@
 import { default as express } from "express";
 import { NotesStore as notes } from "../app.mjs";
 import { ensureAuthenticated } from "./users.mjs";
+import { twitterLogin } from "./users.mjs";
 
 export const router = express.Router();
 // Add Note.
@@ -11,6 +12,7 @@ router.get("/add", ensureAuthenticated, (req, res, next) => {
     notekey: "",
     user: req.user,
     note: undefined,
+    twitterLogin: twitterLogin,
   });
 });
 
@@ -46,6 +48,7 @@ router.get("/view", async (req, res, next) => {
       notekey: req.query.key,
       user: req.user ? req.user : undefined,
       note: note,
+      twitterLogin: twitterLogin,
     });
   } catch (err) {
     next(err);
@@ -62,6 +65,7 @@ router.get("/edit", ensureAuthenticated, async (req, res, next) => {
       notekey: req.query.key,
       user: req.user,
       note: note,
+      twitterLogin: twitterLogin,
     });
   } catch (err) {
     next(err);
@@ -77,6 +81,7 @@ router.get("/destroy", ensureAuthenticated, async (req, res, next) => {
       notekey: req.query.key,
       user: req.user,
       note: note,
+      twitterLogin: twitterLogin,
     });
   } catch (err) {
     next(err);

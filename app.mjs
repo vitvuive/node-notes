@@ -7,6 +7,8 @@ import { default as cookieParser } from "cookie-parser";
 import { default as bodyParser } from "body-parser";
 import * as http from "http";
 import { default as rfs } from "rotating-file-stream";
+import dotenv from "dotenv/config.js";
+
 import { approotdir } from "./approotdir.mjs";
 import { default as DBG } from "debug";
 const debug = DBG("notes:debug");
