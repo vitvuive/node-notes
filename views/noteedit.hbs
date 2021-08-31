@@ -1,5 +1,6 @@
 <form method='POST' action='/notes/save'>
     <div class="container-fluid">
+    {{#if user}}
     {{#if docreate}}
     <input type='hidden' name='docreate' value="create">
     {{else}}
@@ -33,5 +34,8 @@
     rows="5">{{#if note }}{{note.body}}{{/if}}</textarea>
     </div>
     <button type="submit" class="btn btn-default">Submit</button>
+    {{else}}
+    {{> not-logged-in }}
+    {{/if}}
     </div>
 </form>

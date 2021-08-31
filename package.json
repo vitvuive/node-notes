@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "cross-env DEBUG=notes:* node ./app.mjs",
+    "start": "cross-env DEBUG=notes:* SEQUELIZE_CONNECT=models/sequelize-sqlite.yaml NOTES_MODEL=sequelize USER_SERVICE_URL=http://localhost:5858 node ./app.mjs",
     "server1": "cross-env DEBUG=notes:* PORT=3001 node ./app.mjs",
     "server2": "cross-env DEBUG=notes:* PORT=3002 node ./app.mjs",
     "download": "wget -O -https://github.com/twbs/bootstrap/archive/v4.5.0.tar.gz | tar xvfz -",
@@ -19,8 +19,8 @@
     "sequelize-server1": "cross-env SEQUELIZE_CONNECT=models/sequelize- sqlite.yaml NOTES_MODEL=sequelize PORT=3001 node ./app.mjs",
     "sequelize-server2": "cross-env SEQUELIZE_CONNECT=models/sequelize- sqlite.yaml NOTES_MODEL=sequelize PORT=3002 node ./app.mjs",
     "mongodb-start": "cross-env DEBUG=notes:* MONGO_URL=mongodb://localhost/ MONGO_DBNAME=chap07 NOTES_MODEL=mongodb node ./app.mjs",
-   "mongodb-server1": "cross-env DEBUG=notes:* MONGO_URL=mongodb://localhost/ MONGO_DBNAME=chap07 NOTES_MODEL=mongodb PORT=3001 node ./app.mjs",
-   "mongodb-server2": "cross-env DEBUG=notes:* MONGO_URL=mongodb://localhost/ MONGO_DBNAME=chap07 NOTES_MODEL=mongodb PORT=3002 node ./app.mjs"
+    "mongodb-server1": "cross-env DEBUG=notes:* MONGO_URL=mongodb://localhost/ MONGO_DBNAME=chap07 NOTES_MODEL=mongodb PORT=3001 node ./app.mjs",
+    "mongodb-server2": "cross-env DEBUG=notes:* MONGO_URL=mongodb://localhost/ MONGO_DBNAME=chap07 NOTES_MODEL=mongodb PORT=3002 node ./app.mjs"
   },
   "dependencies": {
     "bootstrap": "4.5.x",
@@ -28,6 +28,7 @@
     "cross-env": "^7.0.3",
     "debug": "~2.6.9",
     "express": "~4.16.1",
+    "express-session": "1.17.x",
     "feather-icons": "4.25.x",
     "hbs": "~4.0.4",
     "http-errors": "~1.6.3",
@@ -36,9 +37,13 @@
     "mongodb": "^3.6.11",
     "morgan": "~1.9.1",
     "mysql": "^2.18.1",
+    "passport": "^0.4.1",
+    "passport-local": "^1.0.0",
     "popper.js": "1.16.x",
     "rotating-file-stream": "^2.1.5",
     "sequelize": "^6.6.5",
-    "sqlite3": "^5.0.2"
+    "session-file-store": "1.4.x",
+    "sqlite3": "^5.0.2",
+    "superagent": "^5.3.1"
   }
 }

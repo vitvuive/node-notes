@@ -21,8 +21,14 @@ import {
 } from "./appsupport.mjs";
 import { router as indexRouter } from "./routes/index.mjs";
 import { router as notesRouter } from "./routes/notes.mjs";
+import { router as usersRouter, initPassport } from "./routes/users.mjs";
 
 import { InMemoryNotesStore } from "./models/notes-memory.mjs";
+
+import session from "express-session";
+import sessionFileStore from "session-file-store";
+const FileStore = sessionFileStore(session);
+export const sessionCookieName = "notescookie.sid";
 
 export const NotesStore = new InMemoryNotesStore();
 
@@ -33,10 +39,7 @@ app.set("view engine", "hbs");
 hbs.registerPartials(path.join(__dirname, "partials"));
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger("dev"));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
+
 app.use(express.static(path.join(__dirname, "public")));
 app.use(
   "/assets/vendor/bootstrap",
@@ -56,9 +59,11 @@ app.use(
   "/assets/vendor/feather-icons",
   express.static(path.join(__dirname, "node_modules", "feather-icons", "dist"))
 );
-// Router function lists
-app.use("/", indexRouter);
-app.use("/notes", notesRouter);
+
+app.use(logger("dev"));
+app.use(cookieParser());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(
   logger(process.env.REQUEST_LOG_FORMAT || "dev", {
@@ -72,9 +77,27 @@ app.use(
   })
 );
 
-// error handlers
+app.use(
+  session({
+    store: new FileStore({ path: "sessions" }),
+    secret: "keyboard mouse",
+    resave: true,
+    saveUninitialized: true,
+    name: sessionCookieName,
+  })
+);
+
+initPassport(app);
+
+// Router function lists
+app.use("/", indexRouter);
+app.use("/notes", notesRouter);
+app.use("/users", usersRouter);
+
 // catch 404 and forward to error handler
 app.use(handle404);
+// error handlers
+
 app.use(basicErrorHandler);
 export const port = normalizePort(process.env.PORT || "3000");
 app.set("port", port);
