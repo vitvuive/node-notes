@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "start": "cross-env DEBUG=notes:* SEQUELIZE_CONNECT=models/sequelize-sqlite.yaml NOTES_MODEL=sequelize USER_SERVICE_URL=http://localhost:5858 node ./app.mjs",
-    "server1": "cross-env DEBUG=notes:* PORT=3001 node ./app.mjs",
-    "server2": "cross-env DEBUG=notes:* PORT=3002 node ./app.mjs",
+    "start-server1": "SEQUELIZE_CONNECT=models/sequelize-sqlite.yaml NOTES_MODEL=models/notes-sequelize USERS_MODEL=models/users-rest USER_SERVICE_URL=http://localhost:5858 PORT=3001 node ./bin/www",
+    "start-server2": "SEQUELIZE_CONNECT=models/sequelize-sqlite.yaml NOTES_MODEL=models/notes-sequelize USERS_MODEL=models/users-rest USER_SERVICE_URL=http://localhost:5858 PORT=3002 node ./bin/www",
     "download": "wget -O -https://github.com/twbs/bootstrap/archive/v4.5.0.tar.gz | tar xvfz -",
     "postdownload": "cd bootstrap-4.5.0 && npm install",
     "clean": "rm -rf bootstrap-4.5.0",
@@ -23,6 +23,7 @@
     "mongodb-server2": "cross-env DEBUG=notes:* MONGO_URL=mongodb://localhost/ MONGO_DBNAME=chap07 NOTES_MODEL=mongodb PORT=3002 node ./app.mjs"
   },
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "bootstrap": "4.5.x",
     "cookie-parser": "~1.4.4",
     "cross-env": "^7.0.3",
