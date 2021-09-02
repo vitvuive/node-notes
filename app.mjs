@@ -29,7 +29,18 @@ import { router as usersRouter, initPassport } from "./routes/users.mjs";
 import { router as indexRouter, init as homeInit } from "./routes/index.mjs";
 import { router as notesRouter, init as notesInit } from "./routes/notes.mjs";
 
-import { InMemoryNotesStore } from "./models/notes-memory.mjs";
+// import { InMemoryNotesStore } from "./models/notes-memory.mjs";
+// export const NotesStore = new InMemoryNotesStore();
+
+import { useModel as useNotesModel } from "./models/notes-store.mjs";
+useNotesModel(process.env.NOTES_MODEL ? process.env.NOTES_MODEL : "memory")
+  .then((store) => {
+    homeInit();
+    notesInit();
+  })
+  .catch((error) => {
+    onError({ code: "ENOTESSTORE", error });
+  });
 
 import session from "express-session";
 import sessionFileStore from "session-file-store";
@@ -38,8 +49,6 @@ export const sessionCookieName = "notescookie.sid";
 
 const sessionSecret = "keyboard mouse";
 const sessionStore = new FileStore({ path: "sessions" });
-
-export const NotesStore = new InMemoryNotesStore();
 
 export const app = express();
 // view engine setup
