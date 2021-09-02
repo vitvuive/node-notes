@@ -51,7 +51,7 @@ export default class SequelizeNotesStore extends AbstractNotesStore {
       title,
       body,
     });
-    this.emitCreated(note);
+    this.emitCreated(sqnote);
     return new Note(sqnote.notekey, sqnote.title, sqnote.body);
   }
   async read(key) {

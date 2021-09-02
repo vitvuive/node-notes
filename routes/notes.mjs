@@ -2,9 +2,13 @@ import { default as express } from "express";
 import { NotesStore as notes } from "../models/notes-store.mjs";
 import { ensureAuthenticated } from "./users.mjs";
 import { twitterLogin } from "./users.mjs";
+import { io } from "../app.mjs";
+import { emitNoteTitles } from "./index.mjs";
+
+import { default as DBG } from "debug";
+const debug = DBG("notes:router-users");
 
 export const router = express.Router();
-export function init() {}
 
 // Add Note.
 router.get("/add", ensureAuthenticated, (req, res, next) => {
@@ -22,18 +26,25 @@ router.get("/add", ensureAuthenticated, (req, res, next) => {
 router.post("/save", ensureAuthenticated, async (req, res, next) => {
   try {
     let note;
+    debug(req.body.docreate);
     if (req.body.docreate === "create") {
+      debug(0);
       note = await notes.create(
         req.body.notekey,
         req.body.title,
         req.body.body
       );
+
+      debug(note);
     } else {
+      debug(1);
+
       note = await notes.update(
         req.body.notekey,
         req.body.title,
         req.body.body
       );
+      debug(note);
     }
     res.redirect("/notes/view?key=" + req.body.notekey);
   } catch (err) {
@@ -99,3 +110,24 @@ router.post("/destroy/confirm", ensureAuthenticated, async (req, res, next) => {
     next(err);
   }
 });
+
+export function init() {
+  io.of("/notes").on("connect", (socket) => {
+    if (socket.handshake.query.key) {
+      socket.join(socket.handshake.query.key);
+    }
+  });
+  notes.on("noteupdated", (note) => {
+    const toemit = {
+      key: note.key,
+      title: note.title,
+      body: note.body,
+    };
+    io.of("/notes").to(note.key).emit("noteupdated", toemit);
+    emitNoteTitles();
+  });
+  notes.on("notedestroyed", (key) => {
+    io.of("/notes").to(key).emit("notedestroyed", key);
+    emitNoteTitles();
+  });
+}
