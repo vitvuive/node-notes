@@ -9,6 +9,9 @@ import * as http from "http";
 import { default as rfs } from "rotating-file-stream";
 import dotenv from "dotenv/config.js";
 
+import socketio from "socket.io";
+import passportSocketIo from "passport.socketio";
+
 import { approotdir } from "./approotdir.mjs";
 import { default as DBG } from "debug";
 const debug = DBG("notes:debug");
@@ -21,9 +24,10 @@ import {
   handle404,
   basicErrorHandler,
 } from "./appsupport.mjs";
-import { router as indexRouter } from "./routes/index.mjs";
-import { router as notesRouter } from "./routes/notes.mjs";
+
 import { router as usersRouter, initPassport } from "./routes/users.mjs";
+import { router as indexRouter, init as homeInit } from "./routes/index.mjs";
+import { router as notesRouter, init as notesInit } from "./routes/notes.mjs";
 
 import { InMemoryNotesStore } from "./models/notes-memory.mjs";
 
@@ -31,6 +35,9 @@ import session from "express-session";
 import sessionFileStore from "session-file-store";
 const FileStore = sessionFileStore(session);
 export const sessionCookieName = "notescookie.sid";
+
+const sessionSecret = "keyboard mouse";
+const sessionStore = new FileStore({ path: "sessions" });
 
 export const NotesStore = new InMemoryNotesStore();
 
@@ -81,8 +88,8 @@ app.use(
 
 app.use(
   session({
-    store: new FileStore({ path: "sessions" }),
-    secret: "keyboard mouse",
+    store: sessionStore,
+    secret: sessionSecret,
     resave: true,
     saveUninitialized: true,
     name: sessionCookieName,
@@ -112,3 +119,13 @@ server.on("request", (req, res) => {
   debug(`${new Date().toISOString()} request ${req.method}
 ${req.url}`);
 });
+
+export const io = socketio(server);
+io.use(
+  passportSocketIo.authorize({
+    cookieParser: cookieParser,
+    key: sessionCookieName,
+    secret: sessionSecret,
+    store: sessionStore,
+  })
+);

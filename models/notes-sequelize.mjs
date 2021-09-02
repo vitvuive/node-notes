@@ -6,6 +6,7 @@ const debug = DBG("notes:notes-sequelize");
 const error = DBG("notes:error-sequelize");
 let sequelize;
 export class SQNote extends Sequelize.Model {}
+
 async function connectDB() {
   if (sequelize) return;
   sequelize = await connectSequlz();
@@ -35,6 +36,7 @@ export default class SequelizeNotesStore extends AbstractNotesStore {
   async update(key, title, body) {
     await connectDB();
     const note = await SQNote.findOne({ where: { notekey: key } });
+    this.emitUpdated(note);
     if (!note) {
       throw new Error(`No note found for ${key}`);
     } else {
@@ -49,11 +51,13 @@ export default class SequelizeNotesStore extends AbstractNotesStore {
       title,
       body,
     });
+    this.emitCreated(note);
     return new Note(sqnote.notekey, sqnote.title, sqnote.body);
   }
   async read(key) {
     await connectDB();
     const note = await SQNote.findOne({ where: { notekey: key } });
+
     if (!note) {
       throw new Error(`No note found for ${key}`);
     } else {
@@ -63,6 +67,7 @@ export default class SequelizeNotesStore extends AbstractNotesStore {
   async destroy(key) {
     await connectDB();
     await SQNote.destroy({ where: { notekey: key } });
+    this.emitDestroyed(key);
   }
   async keylist() {
     await connectDB();

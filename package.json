@@ -42,10 +42,12 @@
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
     "passport-twitter": "^1.0.4",
+    "passport.socketio": "3.7.x",
     "popper.js": "1.16.x",
     "rotating-file-stream": "^2.1.5",
     "sequelize": "^6.6.5",
     "session-file-store": "1.4.x",
+    "socket.io": "^2.4.1",
     "sqlite3": "^5.0.2",
     "superagent": "^5.3.1"
   }

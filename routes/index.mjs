@@ -3,6 +3,7 @@ import { NotesStore as notes } from "../app.mjs";
 import { twitterLogin } from "./users.mjs";
 
 export const router = express.Router();
+export function init() {}
 
 /* GET home page. */
 router.get("/", async (req, res, next) => {
