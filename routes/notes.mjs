@@ -5,8 +5,15 @@ import { twitterLogin } from "./users.mjs";
 import { io } from "../app.mjs";
 import { emitNoteTitles } from "./index.mjs";
 
-import { default as DBG } from "debug";
-const debug = DBG("notes:router-users");
+import {
+  postMessage,
+  destroyMessage,
+  recentMessages,
+  emitter as msgEvents,
+} from "../models/messages-sequelize.mjs";
+import DBG from "debug";
+const debug = DBG("notes:home");
+const error = DBG("notes:error-home");
 
 export const router = express.Router();
 
@@ -56,12 +63,14 @@ router.post("/save", ensureAuthenticated, async (req, res, next) => {
 router.get("/view", async (req, res, next) => {
   try {
     let note = await notes.read(req.query.key);
+    const messages = await recentMessages("/notes", req.query.key);
     res.render("noteview", {
       title: note ? note.title : "",
       notekey: req.query.key,
       user: req.user ? req.user : undefined,
       note: note,
       twitterLogin: twitterLogin,
+      messages,
     });
   } catch (err) {
     next(err);
@@ -115,6 +124,32 @@ export function init() {
   io.of("/notes").on("connect", (socket) => {
     if (socket.handshake.query.key) {
       socket.join(socket.handshake.query.key);
+
+      socket.on("create-message", async (newmsg, fn) => {
+        try {
+          await postMessage(
+            newmsg.from,
+            newmsg.namespace,
+            newmsg.room,
+            newmsg.message
+          );
+          fn("ok");
+        } catch (err) {
+          error(`FAIL to create message ${err.stack}`);
+        }
+      });
+
+      socket.on("delete-message", async (data) => {
+        try {
+          await destroyMessage(data.id);
+        } catch (err) {
+          error(`FAIL to delete message ${err.stack}`);
+        }
+      });
+
+      socket.on("destroymessage", (data) => {
+        $("#note-message-" + data.id).remove();
+      });
     }
   });
   notes.on("noteupdated", (note) => {
@@ -129,5 +164,13 @@ export function init() {
   notes.on("notedestroyed", (key) => {
     io.of("/notes").to(key).emit("notedestroyed", key);
     emitNoteTitles();
+  });
+
+  // message
+  msgEvents.on("newmessage", (newmsg) => {
+    io.of(newmsg.namespace).to(newmsg.room).emit("newmessage", newmsg);
+  });
+  msgEvents.on("destroymessage", (data) => {
+    io.of(data.namespace).to(data.room).emit("destroymessage", data);
   });
 }
