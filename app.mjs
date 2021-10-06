@@ -138,5 +138,3 @@ io.use(
     store: sessionStore,
   })
 );
-
-// action
